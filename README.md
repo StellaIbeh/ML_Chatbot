@@ -1,6 +1,6 @@
 # Personal Medical Assistant Chatbot
 
-This project is a Personal Medical Assistant chatbot built using deep learning techniques. The chatbot leverages BERT for natural language understanding and TensorFlow/Keras for intent classification. Below is a guide on how to set up and run the project.
+This project is a  Medical Assistant chatbot built using deep learning techniques. The chatbot uses BERT for natural language processing  and TensorFlow/Keras for intent classification. Below is a guide on how to set up and run the project.
 
 ## Table of Contents
 1. Project Overview
@@ -12,8 +12,22 @@ This project is a Personal Medical Assistant chatbot built using deep learning t
 7. License
 
 ## Project Overview
-The Personal Medical Assistant chatbot provides personalized medical advice based on user queries. Users can interact with the chatbot to receive guidance on various medical issues.
+The Medical Assistant chatbot provides answers to medical questions based on the users queries. Users can interact with the chatbot to receive answers  on various medical issues.
+ ## Performance Metrics
+The chatbot's performance was evaluated using various NLP metrics:
 
+BLEU: 0.0
+f1 score : 0.0973
+
+These results indicate that the model generates highly relevant responses with low uncertainty.
+
+Hyperparameter Experimentation
+Several hyperparameter configurations were tested to optimize model performance. The following table summarizes the experiments:
+
+Learning Rate	Batch Size	Weight Decay	Accuracy
+1e-05	8	0.01	6.9687
+1e-05	32	0.05	6.7494
+1e-05	16	0.01	6.8245
 
 ## Requirements
 - Python 3.7 or higher
@@ -36,7 +50,7 @@ pip install -r requirements.txt
 ## Setup Instructions
 - Clone the Repository:
 ```bash
-git clone https://github.com/kaybrian/Chatbot_ML_T1.git
+git clone https://github.com/StellaIbeh/ML_Chatbot
 ```
 - Navigate to the cloned directory:
 ```bash
@@ -85,4 +99,4 @@ python app.py
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 ## Authors
-- [Kayongo Johnson Brian](https://github.com/kaybrian) 
+- StellaIbeh https://github.com/StellaIbeh/

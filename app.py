@@ -18,7 +18,6 @@ with open("./data/chat/data.json", "r") as json_file:
 # Load the BERT tokenizer and model from Hugging Face
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 bert_model = BertModel.from_pretrained('bert-base-uncased')
-
 lemmatizer = WordNetLemmatizer()
 
 # Function to get BERT embeddings
@@ -35,8 +34,7 @@ def predict_class(sentence):
     ERROR_THRESHOLD = 0.25
     results = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
     results.sort(key=lambda x: x[1], reverse=True)
-    return_list = [{'intent': classes[r[0]], 'probability': str(r[1])} for r in results]
-    return return_list
+    return [{'intent': classes[r[0]], 'probability': str(r[1])} for r in results]
 
 # Function to get the response based on the intent predicted
 def get_response(intents_list, intents_json):
@@ -53,15 +51,79 @@ def chatbot_response(message):
     response = get_response(intents, dict_)
     return response
 
-# Create the Gradio interface
-iface = gr.Interface(
-    fn=chatbot_response,
-    inputs="text",
-    outputs="text",
-    title="Personal Medical Assistant",
-    description="Chatbot for Personal Medical Assistant, Get Personalized Medical Advice and Treatments.",
-    theme="huggingface",
-)
+# Enhanced CSS for a modern, visually appealing interface
+css = """
+body {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.chatbot-title {
+    font-size: 3em;
+    text-align: center;
+    margin-bottom: 0.5em;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+.gr-chatbot {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 1em;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-height: 500px;
+    overflow-y: auto;
+}
+.gr-textbox {
+    border-radius: 25px;
+    padding: 10px;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.gr-button {
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #ffffff;
+    color: #764ba2;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.gr-button:hover {
+    background-color: #f1f1f1;
+}
+.clear-button {
+    background-color: #e74c3c !important;
+    color: #ffffff !important;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 1em;
+}
+.clear-button:hover {
+    background-color: #c0392b !important;
+}
+"""
 
-# Launch the Gradio interface
-iface.launch()
+# Create a Gradio Blocks-based interface with custom styling
+with gr.Blocks(theme="huggingface", css=css, title="Personal Medical Assistant") as demo:
+    gr.Markdown("<h1 class='chatbot-title'>💬 Personal Medical Assistant Chatbot</h1>")
+    
+    # Chat component for the conversation
+    chatbot = gr.Chatbot(elem_classes="gr-chatbot")
+    
+    with gr.Row():
+        msg = gr.Textbox(show_label=False, placeholder="Type your message here...", lines=1, elem_classes="gr-textbox")
+        send = gr.Button("Send", variant="primary", elem_classes="gr-button")
+        
+    clear = gr.Button("Clear Chat", variant="secondary", elem_classes="clear-button")
+    
+    # Function to update the chat history
+    def respond(message, chat_history):
+        if message:
+            bot_response = chatbot_response(message)
+            chat_history = chat_history + [[message, bot_response]]
+        return "", chat_history
+
+    # Bind the submit and click events
+    msg.submit(respond, [msg, chatbot], [msg, chatbot])
+    send.click(respond, [msg, chatbot], [msg, chatbot])
+    clear.click(lambda: None, None, chatbot, queue=False)
+    
+demo.launch()
